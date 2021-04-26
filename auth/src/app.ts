@@ -8,9 +8,11 @@ import { errorHandle } from './middlewares/error-handle';
 import { NotFound } from './error/not-found';
 import 'express-async-errors';
 import cookieSession from 'cookie-session';
+const cors = require('cors');
 
 const app = express();
 app.set('trust proxy', true);
+app.use(cors({ origin: '*' }));
 app.use(json());
 app.use(
 	cookieSession({
