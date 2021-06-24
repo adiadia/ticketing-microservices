@@ -1,6 +1,8 @@
 import express, { Request, Response } from 'express';
 import { Ticket } from '../models/ticket';
 import { body } from 'express-validator';
+import { TicketUpdatedPublisher } from '../events/publishers/ticket-updated-pulisher';
+import { natsWrapper } from '../nats-wrapper';
 import {
 	validateRequest,
 	NotFoundError,
@@ -11,6 +13,7 @@ import {
 const router = express.Router();
 router.put(
 	'/api/tickets/:id',
+	// @ts-ignore
 	requireAuth,
 	[
 		body('title').not().isEmpty().withMessage('Title is required'),
@@ -35,6 +38,13 @@ router.put(
 		});
 
 		await ticket.save();
+		new TicketUpdatedPublisher(natsWrapper.client).publish({
+			id: ticket.id,
+			price: ticket.price,
+			// @ts-ignore
+			title: ticket.title,
+			userId: ticket.userId,
+		});
 
 		res.send(ticket);
 	}
