@@ -8,6 +8,7 @@ import {
 	NotFoundError,
 	requireAuth,
 	NotAuthorizedError,
+	BadRequestError,
 } from '@sgtickets/common';
 
 const router = express.Router();
@@ -28,6 +29,11 @@ router.put(
 		if (!ticket) {
 			throw new NotFoundError();
 		}
+
+		if (ticket.orderId) {
+			throw new BadRequestError('can not edit a reserved ticket');
+		}
+
 		if (req.currentUser?.id !== ticket.userId) {
 			throw new NotAuthorizedError();
 		}
