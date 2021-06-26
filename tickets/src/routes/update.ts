@@ -44,6 +44,7 @@ router.put(
 			// @ts-ignore
 			title: ticket.title,
 			userId: ticket.userId,
+			version: ticket.version,
 		});
 
 		res.send(ticket);
